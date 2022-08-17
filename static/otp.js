@@ -22,7 +22,9 @@
     css.href = _root + "/static/otp.css";
     document.querySelector("head").appendChild(css);
     
-    var onCancel = null;
+    var onCancel = null,
+	eventType,
+	eventListener;
 
 	// Open an inline dialog.
 	function modal(url, title) {
@@ -56,6 +58,8 @@
     }
     
     function close() {
+	// remove event listener on close to avoid event getting triggered on future instances
+        if (eventType && eventListener) removeEventListener(eventType, eventListener);
         document.querySelector("#otpgateway-modal-wrap").remove();
     }
 
@@ -70,6 +74,8 @@
                     if(e.origin.indexOf(_root) === -1) {
                         return;
                     }
+		    eventType = e.type;
+		    eventListener = handle;
                     removeEventListener(e.type, handle);
 
                     // Trigger the callback.
